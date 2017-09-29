@@ -1,0 +1,140 @@
+﻿@model TaskAutoRunManager.Models.ConfigSettingList
+@{
+    Layout = null;
+}
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>节点配置</title>
+    <style type="text/css">
+        th {
+            height: 30px;
+            border: 1px solid #dcdcdc;
+        }
+
+        tr td {
+            height: 30px;
+            border: 1px solid #dcdcdc;
+        }
+
+        a:visited {
+            color: blue;
+        }
+
+        ul {
+            margin: 0px;
+        }
+
+        li {
+            list-style: none;
+            float: left;
+            margin-right: 10px;
+        }
+
+        .breakLine {
+            -moz-word-break: break-all;
+            -o-word-break: break-all;
+            word-break: break-all;
+            word-wrap: break-word;
+        }
+    </style>
+    <script src="/Scripts/jquery-1.8.2.min.js"></script>
+    <script src="~/Content/layer/layer.js"></script>
+    <script type="text/javascript">
+        function AddEdit(id) {
+            window.xp_index = layer.open({
+                type: 2,
+                title: '操作',
+                fix: false,
+                shadeClose: true,
+                maxmin: true,
+                area: ['500px', '300px'],
+                moveType: 1,
+                shift: 1,
+                offset: ['100px', '200px'],
+                content: '../EditSetting/Home?configId=' + id,
+                end: function () {
+                    window.location.reload();
+                    // layer.tips('试试相册模块？', '#photosDemo', { tips: 1 });
+                }
+            });
+        }
+
+        function DelSetting(id) {
+
+            if (!confirm("删除是不可恢复的，你确定要删除吗？")) {
+                return false;
+            }
+
+            var url = "/EditSetting/DelSetting";
+            $.ajax({
+                url: url,
+                data: {
+                    Id: id
+                },
+                dataType: "json",
+                cache: false,
+                type: "POST",
+                success: function (result) {
+                    if (result.Data.Success == true) {
+                        alert(result.Data.Message);
+                        window.location.reload();
+                    } else {
+                        alert(result.Data.Message);
+                    }
+                },
+                error: function (msg) {
+                    alert(msg);
+                }
+            });
+        }
+    </script>
+</head>
+<body style="margin: 0; font-family: 微软雅黑;">
+    <div style="background: url('/images/navbj.gif');height: 50px;width: 100%;padding-top:8px;">
+        <div style="width: 1450px;height: 38px;margin: 0 auto;">
+            <img src="/images/Goldwind.png" />
+        </div>
+    </div>
+    <div style="width: 1450px;height:30px; clear: both; margin: 0 auto;">
+        <a href="javascript:void(0)" onclick="AddEdit(0); " style="float:right;">添加</a>
+    </div>
+    <div id="TuanList" style="width: 1400px; margin: 0 auto;clear: both;">
+        <div>
+            <table style="width: 1450px;border-collapse: collapse; text-align: center; margin-left:10px;">
+                @if (Model.CsList != null)
+                {
+                    <tr>
+                        <th style="width: 10%;">key</th>
+                        <th style="width: 40%;">value</th>
+                        <th style="width: 20%;">描述</th>
+                        <th style="width: 20%;">分组</th>
+                        <th style="width: 10%;">操作</th>
+                    </tr>
+                    foreach (var tl in Model.CsList)
+                    {
+                        <tr>
+                            <td class="breakLine" style="width: 10%;">@tl.Id</td>
+                            <td class="breakLine" style="width: 40%; ">@tl.Value</td>
+                            <td class="breakLine" style="width: 20%;">@tl.Title</td>
+                            <td class="breakLine" style="width: 20%; ">@tl.Fenzu</td>
+                            @if (ViewBag.Manager.ToString() == "1")
+                            {
+                                <td class="breakLine" style="width: 10%;">
+                                    <a onclick="AddEdit('@(tl.Id)'); " href="javascript:void(0)">编辑</a>
+                                    <a onclick="DelSetting('@(tl.Id)'); " href="javascript:void(0)">删除</a>
+                                </td>
+                            }
+                        </tr>
+                    }
+                }
+                else
+                {
+                    @("无数据")
+                }
+            </table>
+        </div>
+    </div>
+</body>
+</html>

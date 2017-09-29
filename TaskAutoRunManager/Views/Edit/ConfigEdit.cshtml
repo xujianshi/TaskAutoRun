@@ -1,0 +1,202 @@
+﻿@model TaskAutoRunManager.Models.ConfigSetting
+@{
+    ViewBag.Title = "Home";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Index</title>
+    <meta charset="UTF-8" name='viewport' content='width=device-width,initial-scale=1,user-scalable=no'>
+
+    <script src="/Scripts/jquery-1.8.2.min.js"></script>
+    <script src="~/Scripts/layer/layer.js"></script>
+    <style type="text/css">
+        * {
+            padding: 0;
+            margin: 0;
+            outline: none;
+        }
+
+        body {
+            background: #f4f4f4;
+            color: #333;
+        }
+
+        .back {
+            margin: 14px 0 0 15px;
+            float: left;
+            width: 10px;
+            height: 18px;
+            background: url('../images/back.png') no-repeat;
+            background-size: 10px 18px;
+        }
+
+        .f_line {
+            position: relative;
+            padding: 0 15px 0 0;
+            font-size: 14px;
+            color: #666;
+            line-height: 46px;
+            height: 45px;
+            background: #fff;
+            ;
+            margin: 0 0 0 15px;
+            border-bottom: 1px solid #d8d8d8;
+            border-top: 1px solid #d8d8d8;
+        }
+
+        .input {
+            text-align: right;
+            color: #666;
+            border: none;
+            float: right;
+            height: 24px;
+        }
+
+        .sub {
+            text-align: center;
+            padding: 10px 10px 10px 10px;
+        }
+
+        .xdsoft_datetimepicker .xdsoft_calendar td > div {
+            padding-right: 10px;
+            padding-top: 5px;
+        }
+
+        .content {
+        }
+    </style>
+    <script type="text/javascript">
+        $(function () {
+            if ("@ViewBag.IfExist" == "True" || "@ViewBag.IfExist" == "true") {
+                $("#Id").val("@Model.Id");
+                $("#value").val("@Model.Value");
+                $("#fz").val("@Model.Fenzu");
+                $("#ms").val("@Model.Title");
+                $("#LastRunTime").parent().show();
+            } else {
+                selectRunType($("input[name='RunType']:checked").val());
+                $("#Id").attr("readonly", false);
+            }
+
+
+            $("#RunTypeAt").click(function () {
+                if ($("#RunTypeAt").prop("checked")) {
+                    $("#runTimeAt").parent().show();
+                    $("#runMiniteOf").parent().hide();
+                }
+            });
+
+            $("#RunTypeBetween").click(function () {
+                if ($("#RunTypeBetween").prop("checked")) {
+                    $("#runTimeAt").parent().hide();
+                    $("#runMiniteOf").parent().show();
+                }
+            });
+
+        });
+
+        $('#runTimeAt').datetimepicker({
+            datepicker: false,
+            format: 'H:i',
+            step: 5
+        });
+
+
+
+        //选择执行类型
+        function selectRunType(i) {
+            if (i == "1") {
+                $("#RunTypeBetween").attr("checked", true);
+                $("#runMiniteOf").parent().show();
+                @*$("#runMiniteOf").val("@Model.RunMiniteOf");*@
+            } else //if (i == "2")
+            {
+                $("#RunTypeAt").attr("checked", true);
+                $("#runTimeAt").parent().show();
+            }
+        };
+
+
+        function checkIsOpen(i) {
+            if (i == 1) {
+                $("#IsOpen").attr("checked", true);
+            } else {
+                $("#IsOpen").attr("checked", false);
+            }
+        }
+
+        //关闭layer
+        function closeItSelf() {
+            //假设这是iframe页
+            var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+            parent.layer.close(index); //再执行关闭
+        }
+
+
+        function ifNullFromInput() {
+            var ifNull = false;
+            $(".f_line input:text:visible").each(function () {
+                if ($(this).val() == "") {
+                    ifNull = true;
+                }
+            });
+            return ifNull;
+        }
+
+
+        //更新或者插入数据
+        function AddOrUpdata() {
+            //参数判断
+            if (ifNullFromInput()) {
+                alert("请完成信息页面！");
+                return;
+            }
+
+            var url = "/EditSetting/SettingSave";
+            var isopen;
+            $("#IsOpen").prop("checked") ? isopen = 1 : isopen = 2;
+
+            $.ajax({
+                url: url,
+                data: {
+                    Id: $("#Id").val(),
+                    Value: $("#value").val(),
+                    Fenzu: $("#fz").val(),
+                    title: $("#ms").val(),
+                    isOpen: isopen,
+                    ifExist: "@ViewBag.IfExist"
+                },
+                dataType: "json",
+                cache: false,
+                type: "POST",
+                success: function (result) {
+                    if (result.Data.Success == true) {
+                        alert(result.Data.Message);
+                        closeItSelf();
+                    } else {
+                        alert(result.Data.Message);
+                    }
+                },
+                error: function (msg) {
+                    alert(msg);
+                }
+
+            });
+
+        }
+    </script>
+</head>
+<body>
+    <div class="content" style="text-align: center;">
+        <div class="f_line">key：<input id="Id" type="text" value="" style='width:400px;' /></div>
+        <div class="f_line">value:<input id="value" type="text" value="" style='width:400px;' /></div>
+        <div class="f_line">描述:<input id="ms" type="text" value="" style='width:400px;' /></div>
+        <div class="f_line">分组:<input id="fz" type="text" value="" style='width:400px;' /></div>
+        <input style="margin-top: 20px;" type="button" class='submit' value='  提  交  ' onclick=AddOrUpdata()>
+    </div>
+</body>
+</html>

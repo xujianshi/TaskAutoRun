@@ -1,0 +1,208 @@
+﻿@model TaskAutoRunManager.Models.TuanTaskList
+@{
+    Layout = null;
+}
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>任务管理系统</title>
+    <style type="text/css">
+        th {
+            height: 30px;
+            border: 1px solid #dcdcdc;
+        }
+
+        tr td {
+            height: 30px;
+            border: 1px solid #dcdcdc;
+        }
+
+        a:visited {
+            color: blue;
+        }
+
+        ul {
+            margin: 0px;
+        }
+
+        li {
+            list-style: none;
+            float: left;
+            margin-right: 10px;
+        }
+    </style>
+    <script src="~/Scripts/jquery-1.8.2.min.js"></script>
+    <script src="~/Scripts/layer/layer.js"></script>
+    <link href="~/Scripts/layer/skin/layer.css" rel="stylesheet" />
+    <script type="text/javascript">
+        var current = 0;//当前页码
+        var count = 0;//总条数
+        var page = 20;//每页条数
+        var sum = 0;//总页码
+        var selectState = 0;//当前选中的状态
+
+        //状态选择
+        function RunState(id, isOpen) {
+            $.ajax({
+                url: "/Main/RunState",
+                data: { id: id, isOpen: isOpen },
+                dataType: "text",
+                success: function (msg) {
+                    if (msg != 0) {
+                        if (isOpen == 1) {
+                            //$("#imgState" + id).attr("src", "/images/wrong.png");
+                            //$("#runState" + id).text("启用");
+                            taskList(selectState, current);
+                            taskListAll(selectState);
+                        }
+                        else {
+                            //$("#imgState" + id).attr("src", "/images/right.png");
+                            //$("#runState" + id).text("停用");
+                            taskList(selectState, current);
+                            taskListAll(selectState);
+                        }
+                        //alert(msg);
+                    } else {
+                        alert("操作失败");
+                    }
+
+                },
+                error: function () {
+                    alert("操作失败");
+                }
+            });
+        }
+
+        function AddEdit(id) {
+            //iframe层
+            layer.open({
+                type: 2,
+                title: '编辑编辑子任务',
+                shadeClose: true,
+                shade: 1,
+                area: ['680px', '400px'],
+                content: '/edit/index?taskid=' + id
+            });
+        }
+
+        //获取选中状态任务列表
+        function taskList(state, start) {
+            $.ajax({
+                url: "/Main/TuanListAjax",
+                data: { state: state, start: start, page: page,show:"@(ViewBag.Manager)" },
+                dataType: "html",
+                success: function (msg) {
+                    $("#TuanList").html(msg);
+                }
+            });
+        }
+
+        //获取选中状态任务条数
+        function taskListAll(state) {
+            $.ajax({
+                url: "/Main/TuanListAjaxAll",
+                data: { state: state },
+                dataType: "text",
+                success: function (msg) {
+                    count = msg;
+                    $("#count").text(count);
+                    sum = count % page == 0 ? parseInt(count / page) : parseInt(count / page + 1);
+                    $("#sum").text(sum);
+                    $("#current").text(current + 1);
+                    pre();
+                    next();
+                }
+            });
+        }
+
+        //首页，上一页是否显示
+        function pre() {
+            if (current <= 0) {
+                $("#start").css("display", "none");
+                $("#pre").css("display", "none");
+            } else {
+                $("#start").css("display", "block");
+                $("#pre").css("display", "block");
+            }
+            $("#current").text(current + 1);
+            taskList(selectState, current);
+        }
+
+        //尾页，下一页是否显示
+        function next() {
+            if (current >= sum - 1) {
+                $("#end").css("display", "none");
+                $("#next").css("display", "none");
+            } else {
+                $("#end").css("display", "block");
+                $("#next").css("display", "block");
+            }
+            $("#current").text(current + 1);
+            taskList(selectState, current);
+        }
+
+        //加载页面
+        $(function () {
+            taskList(0, 0);
+            taskListAll(0);
+
+            $("li").hover(function () {
+                $(this).css("cursor", "pointer");
+            });
+
+            $("#nav li").click(function () {
+                selectState = $(this).val();
+                current = 0;
+                taskList($(this).val(), current);
+                taskListAll(selectState);
+            });
+
+            $("#pre").click(function () {
+                current -= 1;
+                pre();
+                next();
+            });
+            $("#next").click(function () {
+                current += 1;
+                pre();
+                next();
+            });
+            $("#start").click(function () {
+                current = 0;
+                pre();
+                next();
+                taskList(selectState, current);
+            });
+            $("#end").click(function () {
+                current = sum - 1;
+                pre();
+                next();
+                taskList(selectState, current);
+            });
+        });
+    </script>
+</head>
+<body style="margin: 0; font-family: 微软雅黑;">
+    <center>
+        <div style="background: #555; height: 50px; width: 100%; padding-top: 1px;">
+            <div style="width: 1450px; height: 38px; margin: 0 auto; text-align: left;">
+                <img src="/images/Goldwind.png" />
+            </div>
+        </div>
+        <div style="width: 98%; height: 30px; clear: both; margin: 0 auto;">
+          <a href="/edit/index?taskid=0" target="_blank" style="float: right;">添加</a>
+        </div>
+        <div id="TuanList" style="width: 98%; margin: 0 auto; clear: both;"></div>
+        <div style="width: 98%; margin: 0 auto; clear: both;">
+            <ul style="float: right; text-align: right; color: #ccc;">
+                <li id="start">首页</li>
+                <li id="pre">上一页</li>
+                <li id="next">下一页</li>
+                <li id="end">尾页</li>
+                <li>页码：<span id="current"></span>/<span id="sum"></span></li>
+                <li>总数：<span id="count"></span></li>
+            </ul>
+        </div>
+    </center>
+</body>
+</html>

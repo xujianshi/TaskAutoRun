@@ -1,0 +1,230 @@
+﻿@model TaskAutoRunManager.Models.TuanTask
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Index</title>
+        <meta charset="UTF-8" name='viewport' content='width=device-width,initial-scale=1,user-scalable=no'>
+        <script src="~/Scripts/datetimepicker/jquery.js" type="text/javascript"></script>
+        <link href="~/Scripts/datetimepicker/jquery.datetimepicker.min.css" rel="stylesheet" />
+        <script src="~/Scripts/datetimepicker/jquery.datetimepicker.min.js" type="text/javascript"></script>
+        <style type="text/css">
+            *{padding: 0;margin: 0;outline: none;}
+            body{background: #f4f4f4;color:#333;}
+            .back{margin: 14px 0 0 15px;float: left;width: 10px;height: 18px;background: url('../images/back.png') no-repeat;background-size: 10px 18px;}
+            .f_line{position: relative;padding:5px;font-size: 14pt;color: #666;line-height: 46px;height: 45px;background: #fff;;margin: 0 0 0 15px;border-bottom: 1px solid #d8d8d8;border-top: 1px solid #d8d8d8;}
+            .input {
+                text-align: right;
+                color: #666;
+                border: none;
+                float: right;
+                height: 24px;
+               
+            }
+            .sub {
+                text-align: center;
+                padding: 10px 10px 10px 10px;
+            }
+            .xdsoft_datetimepicker .xdsoft_calendar td > div {
+                padding-right: 10px;
+                padding-top: 5px;
+            }
+
+          
+        </style>
+    </head> 
+    <body>
+        <div class="content" style="width: 600px; height: 600px; margin: 0 auto;padding: 15px">
+            <div class="f_line">id：<input id="Id" type="text" value="" readonly="true" style='width:50px;'/></div>
+            <div class="f_line">名称：<input id="Name" type="text" value="" style='width:100px;'/></div>
+            <div class="f_line">路径:<input id="Path" type="text" value="" style='width:400px;' /></div>
+            <div class="f_line">运行方式:<input id="RunTypeBetween" name="RunType" type="radio" value="1" checked style='width:80px;'/>间隔时间段<input id="RunTypeAt" name="RunType" type="radio" value="2" style='width:80px;' />固定时间</div>
+            <div class="f_line" style="display: none;">运行间隔时间:
+                <input id="runMiniteOf" type="number" name="points" min="1" max="59" value="1" style="width:40px"/>
+                <select id="timeTypeSelect">
+                    <option value="D">天</option>
+                    <option value="H">时</option>
+                    <option value="S">分</option>
+                    @*<option value="M" selected>秒</option>*@
+                </select>
+            </div>
+            <div class="f_line" style="display: none;">
+                运行时间:<input id="runTimeAt" type="text" value=""    style='width: 105px'/>
+            </div>
+            <div class="f_line">
+                编辑人:
+                <input id="Author" type="text" value="" style='width:100px;'/>
+            </div>
+            <div class="f_line" style="display: none;">最后运行时间:<input id="LastRunTime" type="text" value="" style='width:150px;'/></div>
+            <div class="f_line">是否启用:<input id="IsOpen" type="checkbox" value="1" checked style='width:80px;'/></div>
+            <div class="sub " >
+                <input type="button" class='submit' value='  提  交  ' onclick=AddOrUpdata() >
+            </div>
+        </div>
+        <textarea id="path" style="display:none">@Model.Path</textarea>
+		<script type="text/javascript">
+    $(function () {
+        if ("@ViewBag.IfExist" == "True" || "@ViewBag.IfExist" == "true") {
+            $("#Id").val("@Model.Id");
+            $("#Name").val("@Model.Name");
+            $("#Path").val($("#path").text());
+            selectRunType(@Model.RunType);
+
+            $("#runTimeAt").val("@Model.RunTimeAt");
+            $("#Author").val("@Model.Author");
+            $("#LastRunTime").parent().show();
+            $("#LastRunTime").val("@Model.LastRunTime");
+            checkIsOpen("@Model.IsOpen");
+        } else {
+            selectRunType($("input[name='RunType']:checked").val());
+            $("#Id").attr("readonly", false);
+        }
+
+
+        $("#RunTypeAt").click(function () {
+            if ($("#RunTypeAt").prop("checked")) {
+                $("#runTimeAt").parent().show();
+                $("#runMiniteOf").parent().hide();
+            }
+        });
+
+        $("#RunTypeBetween").click(function () {
+            if ($("#RunTypeBetween").prop("checked")) {
+                $("#runTimeAt").parent().hide();
+                $("#runMiniteOf").parent().show();
+            }
+        });
+
+    });
+
+    $('#runTimeAt').datetimepicker({
+        datepicker: false,
+        format: 'H:i',
+        step: 5
+    });
+
+
+
+    //选择执行类型
+    function selectRunType(i) {
+        if (i == "1") {
+            $("#RunTypeBetween").attr("checked", true);
+            $("#runMiniteOf").parent().show();
+            @*$("#runMiniteOf").val("@Model.RunMiniteOf");*@
+            timeShow(@Model.RunMiniteOf);
+        } else //if (i == "2")
+        {
+            $("#RunTypeAt").attr("checked", true);
+            $("#runTimeAt").parent().show();
+        }
+    };
+
+    //时间换算展示
+    function timeShow(min) {
+        if (min < 60) {
+            $("#runMiniteOf").val("@Model.RunMiniteOf");
+            $("#timeTypeSelect").val("S");
+        }
+        else if (min < 3600) {
+            $("#runMiniteOf").val(Number(@Model.RunMiniteOf) / 60);
+            $("#timeTypeSelect").val("H");
+        }
+        else if (min < 216000) {
+            $("#runMiniteOf").val(Number(@Model.RunMiniteOf) / 3600);
+            $("#timeTypeSelect").val("D");
+        }
+    };
+
+
+
+    //换算时间获取秒
+    function getTimeMin() {
+        if ($("#timeTypeSelect").val() == "S") {
+            return $("#runMiniteOf").val();
+        } else if ($("#timeTypeSelect").val() == "H") {
+            return $("#runMiniteOf").val()*60;
+        } else if ($("#timeTypeSelect").val() == "D") {
+            return $("#runMiniteOf").val()*3600;
+        }
+    };
+    
+
+
+    function checkIsOpen(i) {
+        if (i == 1) {
+            $("#IsOpen").attr("checked", true);
+        } else {
+            $("#IsOpen").attr("checked", false);
+        }
+    }
+
+    //关闭layer
+    function closeItSelf() {
+      if (parent != null) {
+            parent.location.reload();
+        }
+        window.close();
+    }
+
+
+    function ifNullFromInput() {
+        var ifNull = false;
+        $(".f_line input:text:visible").each(function () {
+            if ($(this).val() == "") {
+                ifNull = true;
+            }
+        });
+        return ifNull;
+    }
+
+
+    //更新或者插入数据
+    function AddOrUpdata() {
+        //参数判断
+        if (ifNullFromInput()) {
+            alert("请完成信息页面！");
+            return;
+        }
+
+        var url = "/edit/save";
+        var isopen;
+        $("#IsOpen").prop("checked") ? isopen = 1 : isopen = 2;
+
+        $.ajax({
+            url: url,
+            data: {
+                id: $("#Id").val(),
+                name: $("#Name").val(),
+                path: $("#Path").val(),
+                runType: $("input[name='RunType']:checked").val(),
+                runMiniteOf: getTimeMin(),
+                runTimeAt: $("#runTimeAt").val(),
+                author: $("#Author").val(),
+                isOpen: isopen,
+                ifExist: "@ViewBag.IfExist"
+    },
+            dataType: "json",
+            cache: false,
+            type: "POST",
+            success: function (result) {
+                if (result.Data.Success == true) {
+                    alert(result.Data.Message);
+                    closeItSelf();
+                } else {
+                    alert(result.Data.Message);
+                }
+            },
+            error: function (msg) {
+                alert(msg);
+            }
+
+        });
+
+    }
+</script>
+    </body>
+</html>
+ 

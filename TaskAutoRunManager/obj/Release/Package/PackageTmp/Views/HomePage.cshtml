@@ -1,0 +1,65 @@
+﻿@{
+    Layout = null;
+}
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>网页导航</title>
+    <style type="text/css">
+        th {
+            height: 30px;
+            border: 1px solid #dcdcdc;
+        }
+
+        tr td {
+            height: 30px;
+            border: 1px solid #dcdcdc;
+        }
+
+        a:visited {
+            color: blue;
+        }
+
+        ul {
+            margin: 0px;
+        }
+
+        li {
+            list-style: none;
+            float: left;
+            margin-right: 10px;
+        }
+    </style>
+    <script src="/Scripts/jquery-1.8.2.min.js"></script>
+    <script src="~/Content/layer/layer.js"></script>
+</head>
+<body style="margin: 0; font-family: 微软雅黑;">
+    <div style="background: url('/images/navbj.gif');height: 50px;width: 100%;padding-top:8px;">
+        <div style="width: 1450px;height: 38px;margin: 0 auto;">
+            <img src="/images/Goldwind.png" />
+        </div>
+    </div>
+    <div id="dataList" style="width: 1400px; margin: 0 auto;clear: both;">
+        <div>
+            <table style="width: 1450px;border-collapse: collapse; text-align: center; margin-left:10px;">
+                <tr>
+                    <th>名称</th>
+                    <th>链接</th>
+                    <th>描述</th>
+                </tr>
+                <tr>
+                    <td>节点配置</td>
+                    <td><a target="_blank" href="http://run.moni.fang.com/ConfigSetting/TuanListAjax">http://run.moni.fang.com/ConfigSetting/TuanListAjax</a></td>
+                    <td>添加和删除配置节点</td>
+                </tr>
+                <tr>
+                    <td>定时监控</td>
+                    <td><a target="_blank" href="http://run.moni.fang.com">http://run.moni.fang.com</a></td>
+                    <td></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

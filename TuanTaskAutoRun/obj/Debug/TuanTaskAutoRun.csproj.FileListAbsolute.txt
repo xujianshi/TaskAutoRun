@@ -1,0 +1,10 @@
+D:\SVN\TaskAutoRun\TuanTaskAutoRun\bin\Debug\TuanTaskAutoRun.exe.config
+D:\SVN\TaskAutoRun\TuanTaskAutoRun\obj\Debug\TuanTaskAutoRun.Properties.Resources.resources
+D:\SVN\TaskAutoRun\TuanTaskAutoRun\obj\Debug\TuanTaskAutoRun.csproj.GenerateResource.Cache
+D:\SVN\TaskAutoRun\TuanTaskAutoRun\bin\Debug\TuanTaskAutoRun.exe
+D:\SVN\TaskAutoRun\TuanTaskAutoRun\bin\Debug\TuanTaskAutoRun.pdb
+D:\SVN\TaskAutoRun\TuanTaskAutoRun\bin\Debug\SoufunLab.Framework.dll
+D:\SVN\TaskAutoRun\TuanTaskAutoRun\bin\Debug\SoufunLab.Framework.pdb
+D:\SVN\TaskAutoRun\TuanTaskAutoRun\obj\Debug\TuanTaskAutoRun.exe
+D:\SVN\TaskAutoRun\TuanTaskAutoRun\obj\Debug\TuanTaskAutoRun.pdb
+D:\SVN\TaskAutoRun\TuanTaskAutoRun\obj\Debug\TuanTaskAutoRun.csprojResolveAssemblyReference.cache

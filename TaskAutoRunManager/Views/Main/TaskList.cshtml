@@ -1,0 +1,83 @@
+﻿@model TaskAutoRunManager.Models.TuanTaskList
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>TaskList</title>
+</head>
+<body>
+    <div>
+        <table style="width: 98%;border-collapse: collapse; text-align: center; margin-left:10px;">
+            @if (Model.tuanTaskList != null)
+            {
+                <th>编号</th>
+                <th>名称</th>
+                <th>路径</th>
+                <th>执行</th>
+                <th>上次运行时间</th>
+                <th>作者</th>
+                <th>状态</th>
+                if (ViewBag.Manager.ToString() == "1")
+                {
+                    <th>操作</th>
+                }
+                @*<input id="ListCount" type="hidden" value="@ViewBag.Count"/>*@
+                foreach (var tl in Model.tuanTaskList)
+                {
+                    <tr>
+                        <td>@tl.Id</td>
+                        <td>@tl.Name</td>
+                        <td>@tl.Path</td>
+                        @{
+                    string execute = string.Empty;
+                    string imgUrl = string.Empty;
+                    string run = string.Empty;
+                    if (tl.RunType == 1)
+                    {
+                        execute = "每隔" + tl.RunMiniteOf + "分钟";
+                    }
+                    else
+                    {
+                        execute = "每天" + tl.RunTimeAt;
+                    }
+
+                    if (tl.IsOpen == 1)
+                    {
+                        run = "停用";
+                        imgUrl = "/images/right.png";
+                    }
+                    else
+                    {
+                        run = "启用";
+                        imgUrl = "/images/wrong.png";
+                    }
+                        }
+                        <td>
+                            @execute
+                        </td>
+                        <td>@tl.LastRunTime</td>
+                        <td>@tl.Author</td>
+                        <td><img src="@imgUrl" height="30px" /></td>
+                        @if (ViewBag.Manager.ToString() == "1")
+                        {
+                            <td> <a onclick="RunState('@(tl.Id)', @(tl.IsOpen)) " href="#">@run</a> 
+                        | <a href="/edit/index?taskid=@(tl.Id)" target="_blank">编辑</a>
+             </td>
+                        }
+                    </tr>
+                }
+            }
+            else
+            {
+                @("无数据")
+            }
+        </table>
+    </div>
+</body>
+</html>
