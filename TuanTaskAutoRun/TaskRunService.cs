@@ -10,9 +10,9 @@ namespace TaskAutoRun
     partial class TaskRunService : ServiceBase
     {
         private bool state = false;
-        List<Xtask> taskList = new List<Xtask>();
-        string connstr = ConfigurationSettings.AppSettings["taskdb"];
-        
+        private List<Xtask> taskList = new List<Xtask>();
+        private string connstr = ConfigurationSettings.AppSettings["taskdb"];
+
         public TaskRunService()
         {
             InitializeComponent();
@@ -21,10 +21,10 @@ namespace TaskAutoRun
         protected override void OnStart(string[] args)
         {
             state = true;
-            Thread t=new Thread(RunTaskMethod);
+            Thread t = new Thread(RunTaskMethod);
             t.Start();
         }
-        
+
         protected override void OnStop()
         {
             state = false;

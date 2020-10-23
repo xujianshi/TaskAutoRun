@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.ServiceProcess;
-using System.Threading;
-using System.Windows.Forms;
+﻿using System.ServiceProcess;
 
 namespace TaskAutoRun
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
-            var servicesToRun = new ServiceBase[] 
-            { 
-                new TaskRunService(),  
+            var servicesToRun = new ServiceBase[]
+            {
+                new TaskRunService(),
             };
             ServiceBase.Run(servicesToRun);
         }

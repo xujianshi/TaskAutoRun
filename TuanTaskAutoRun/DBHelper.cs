@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -31,7 +28,7 @@ namespace TaskAutoRun
                     {
                         cmd.Parameters.Add(pa);
                     }
-                   return cmd.ExecuteNonQuery();
+                    return cmd.ExecuteNonQuery();
                 }
                 catch (Exception ex)
                 {
@@ -54,12 +51,13 @@ namespace TaskAutoRun
             {
                 try
                 {
-                     da.Fill(dt);
+                    da.Fill(dt);
                 }
                 catch { }
             }
             return dt;
         }
+
         /// <summary>
         /// 创建表格，得到表格类型的数据
         /// </summary>

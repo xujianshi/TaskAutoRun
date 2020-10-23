@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Text;
 using System.Xml;
@@ -34,7 +33,6 @@ namespace TaskAutoRun
             }
         }
 
-
         /// <summary>
         /// 获得远程地址xml
         /// </summary>
@@ -45,7 +43,6 @@ namespace TaskAutoRun
         {
             return GetXml(target, Encoding.GetEncoding("gb2312"));
         }
-
 
         /// <summary>
         /// 获得远程地址xml
@@ -129,19 +126,16 @@ namespace TaskAutoRun
             return DownLoadData(target, vEncoding, 10, 10);
         }
 
-
         public static DataSet DownLoadData(string target, Encoding vEncoding, int vTimeout, int vReadWriteTimeout)
         {
             string html = GetXml(target, vEncoding, vTimeout, vReadWriteTimeout);
             return GetDataSet(html);
         }
 
-
         public static string DownLoadStrData(string target, Encoding vEncoding, int vTimeOut, int vReadWriteTimeOut)
         {
             return GetXml(target, vEncoding, vTimeOut, vReadWriteTimeOut);
         }
-
 
         /// <summary>
         /// 获取远程接口数据-表结构
@@ -151,10 +145,8 @@ namespace TaskAutoRun
         /// <returns>数据表结果集</returns>
         public static DataSet DownLoadRemoteData(string vUrl)
         {
-
             return DownLoadData(vUrl, Encoding.GetEncoding("gb2312"));
         }
-
 
         /// <summary>
         /// 获取远程接口数据-表结构
@@ -167,7 +159,6 @@ namespace TaskAutoRun
             return DownLoadData(target, Encoding.UTF8);
         }
 
-
         /// <summary>
         /// 获取远程接口返回-字符串
         /// add by zhanghl  2015-12-1
@@ -178,7 +169,6 @@ namespace TaskAutoRun
         {
             return DownLoadStrData(target, Encoding.UTF8, 5, 5);
         }
-
 
         /// <summary>
         /// 获取远程接口数据-表结构
@@ -203,8 +193,6 @@ namespace TaskAutoRun
             return null;
         }
 
-
-
         /// <summary>
         /// 过滤低位非打印字符
         /// </summary>
@@ -217,12 +205,11 @@ namespace TaskAutoRun
             {
                 int ss = (int)cc;
                 if (((ss >= 0) && (ss <= 8)) || ((ss >= 11) && (ss <= 12)) || ((ss >= 14) && (ss <= 32)))
-                    info.AppendFormat(" ", ss);//&#x{0:X}; 
+                    info.AppendFormat(" ", ss);//&#x{0:X};
                 else info.Append(cc);
             }
             return info.ToString();
         }
-
 
         /// <summary>
         /// 获取远程接口数据-表结构
@@ -240,7 +227,6 @@ namespace TaskAutoRun
             return null;
         }
 
-
         /// <summary>
         /// 获取远程接口数据-字符串
         /// </summary>
@@ -251,16 +237,16 @@ namespace TaskAutoRun
             return GetXml(target, Encoding.GetEncoding("gb2312"));
         }
 
-
         /// <summary>
         /// 向某个Url提交数据并取得该地址返回的数据
         /// </summary>
-        /// <param name="url"></param> 
+        /// <param name="url"></param>
         /// <param name="param"></param>
         /// <returns></returns>
         public static string PostData(string url, string param)
         {
             #region post数据
+
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
             req.Timeout = 120000;
             byte[] requestbytes = System.Text.Encoding.ASCII.GetBytes(param);
@@ -276,14 +262,14 @@ namespace TaskAutoRun
             sr.Close();
             res.Close();
             return backstr;
-            #endregion
-        }
 
+            #endregion post数据
+        }
 
         /// <summary>
         /// 想某个urlpost请求，返回二进制数据
         /// </summary>
-        /// <param name="url"></param> 
+        /// <param name="url"></param>
         /// <param name="param"></param>
         /// <returns></returns>
         public static byte[] GetBytesByPost(string url, string param, Encoding vCodeType)
@@ -300,13 +286,13 @@ namespace TaskAutoRun
                 Stream requeststream = req.GetRequestStream();
                 requeststream.Write(requestbytes, 0, requestbytes.Length);
                 requeststream.Close();
-                // 获取对应HTTP请求的响应  
+                // 获取对应HTTP请求的响应
                 HttpWebResponse response = (HttpWebResponse)req.GetResponse();
-                // 获取响应流  
+                // 获取响应流
                 Stream responseStream = response.GetResponseStream();
-                // 对接响应流(以"GBK"字符集)  
+                // 对接响应流(以"GBK"字符集)
                 StreamReader sReader = new StreamReader(responseStream, vCodeType);
-                // 开始读取数据  
+                // 开始读取数据
                 Char[] sReaderBuffer = new Char[256];
                 int count = sReader.Read(sReaderBuffer, 0, 256);
                 while (count > 0)
@@ -315,7 +301,7 @@ namespace TaskAutoRun
                     datalist.AddRange(vCodeType.GetBytes(tempStr));
                     count = sReader.Read(sReaderBuffer, 0, 256);
                 }
-                // 读取结束  
+                // 读取结束
                 sReader.Close();
                 return datalist.ToArray();
             }
@@ -324,7 +310,6 @@ namespace TaskAutoRun
                 return new byte[0];
             }
         }
-
 
         /// <summary>
         /// 向某个url提交数据并读取该地址返回的xml,并将xml转换成dataset,并返回dataset中某个表

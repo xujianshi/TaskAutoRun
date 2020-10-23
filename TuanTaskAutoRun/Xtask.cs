@@ -1,11 +1,11 @@
-﻿using System;
+﻿using SoufunLab.Framework;
+using SoufunLab.Framework.Data;
+using System;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using SoufunLab.Framework;
-using SoufunLab.Framework.Data;
 
 namespace TaskAutoRun
 {
@@ -17,11 +17,11 @@ namespace TaskAutoRun
             Path = SlConvert.TryToString(row["path"]);
             IsOpen = SlConvert.TryToInt16(row["IsOpen"]) == 1;
             LastExcuteTime = SlConvert.TryToDateTime(row["LastRunTime"], DateTime.Now.AddDays(-1));
-            
+
             int runType = SlConvert.TryToInt16(row["runType"]);
             if (runType == 1) //每隔一段时间跑一次
             {
-               int  runMiniteOf = SlConvert.TryToInt16(row["RunMiniteOf"]);
+                int runMiniteOf = SlConvert.TryToInt16(row["RunMiniteOf"]);
                 NextExcuteTime = LastExcuteTime.AddMinutes(runMiniteOf);
             }
             else //每天定时跑一次
@@ -34,17 +34,17 @@ namespace TaskAutoRun
                 }
             }
         }
-        
+
         public bool IsOpen { get; set; }
-        
+
         public string Path { get; set; }
 
         public DateTime NextExcuteTime { get; set; }
 
         public DateTime LastExcuteTime { get; set; }
-        
+
         public string TaskId { get; set; }
-        
+
         public void Excute(string databaseConnetionString)
         {
             bool runResult = false;
@@ -52,7 +52,7 @@ namespace TaskAutoRun
             {
                 runResult = RunApp(Path); //打开此文件。
             }
-            if ( Path.EndsWith(".bat") && File.Exists(Path))
+            if (Path.EndsWith(".bat") && File.Exists(Path))
             {
                 runResult = RunBat(Path); //打开此文件。
             }
@@ -68,12 +68,12 @@ namespace TaskAutoRun
                 SlDatabase.ExecuteNonQuery(databaseConnetionString, sql);
             }
         }
-        
-        void WriteLog(string message)
+
+        private void WriteLog(string message)
         {
             try
             {
-                string path = Application.StartupPath+ "/" + DateTime.Now.ToString("yyyyMM") + ".txt";
+                string path = Application.StartupPath + "/" + DateTime.Now.ToString("yyyyMM") + ".txt";
                 var writer = new StreamWriter(path, true, Encoding.UTF8);
                 writer.WriteLine("时间：" + DateTime.Now + " \r\n记录：" + message);
                 writer.WriteLine("--------------------------------------------------------------------------");
@@ -86,7 +86,7 @@ namespace TaskAutoRun
             }
         }
 
-        bool RunApp(string file)
+        private bool RunApp(string file)
         {
             try
             {
@@ -111,7 +111,7 @@ namespace TaskAutoRun
                     return false;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 WriteLog(ex.ToString());
                 return false;
@@ -119,7 +119,7 @@ namespace TaskAutoRun
             return true;
         }
 
-        bool RunBat(string file)
+        private bool RunBat(string file)
         {
             try
             {
@@ -151,7 +151,8 @@ namespace TaskAutoRun
             }
             return true;
         }
-        bool RunWeb(string url)
+
+        private bool RunWeb(string url)
         {
             string html = NetHelper.GetXml(url);
             if (!string.IsNullOrEmpty(html))
